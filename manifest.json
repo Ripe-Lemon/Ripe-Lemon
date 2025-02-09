@@ -1,0 +1,19 @@
+{
+    "manifest_version": 2,
+    "name": "Ripe Lemon",
+    "version": "0.1",
+  
+    "description": "waaaaaooooooo",
+  
+    "icons": {
+      "48": "icons/ripe_lemon.svg"
+    },
+  
+    "content_scripts": [
+      {
+        "matches": ["*://*.bilibili.com/*"],
+        "js": ["test.js"]
+      }
+    ]
+  }
+  
