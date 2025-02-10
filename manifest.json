@@ -1,27 +1,34 @@
 {
   "manifest_version": 2,
   "name": "Ripe lemon",
-  "version": "0.2",
+  "version": "0.3",
 
   "description": "waaaaaaoooooooooo",
   "homepage_url": "https://github.com/Pycnocline/Ripe-Lemon",
   "icons": {
-    "48": "icons/ripe_lemon.svg"
+    "48": "images/ripe_lemon.svg"
   },
 
   "permissions": [
     "activeTab",
-    "tabs"
+    "contextMenus",
+    "storage"
   ],
 
   "browser_action": {
-    "default_icon": "icons/ripe_lemon.svg",
+    "default_icon": "images/ripe_lemon.svg",
     "default_title": "Ripe lemon",
     "default_popup": "/popup/popup_interface.html"
   },
 
-  "web_accessible_resources": [
-    "icons/ripe_lemon.ico",
-    "icons/ripe_lemon.svg"
-  ]
+  "content_scripts": [
+    {
+      "matches": ["*://*.bilibili.com/"],
+      "js": ["/scripts/homepage_filter.js"]
+    }
+  ],
+
+  "options_ui": {
+    "page": "/options/options.html"
+  }
 }
