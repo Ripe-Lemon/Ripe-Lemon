@@ -13,6 +13,8 @@ container.style.gap = "20px";
 container.style.padding = "20px";
 container.style.justifyContent = "center";
 container.style.width = "100%";
+container.style.left = "5%";
+container.style.right = "5%";
 
 // 遍历视频卡片
 videoCards.forEach(card => {
