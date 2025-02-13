@@ -1,127 +1,139 @@
-// 隐藏原本页面的内容
-(function() {
-    // 获取页面上所有的元素
+// 隐藏原有页面内容
+function hideOriginalContent() {
     const allElements = document.body.children;
-
-    // 隐藏所有元素
     for (let element of allElements) {
         element.style.display = "none";
     }
-})();
+}
 
-// 获取首页信息流视频卡片
-const videoCards = document.querySelectorAll(".enable-no-interest");
+// 创建并设置容器样式
+function createContainer() {
+    const container = document.createElement("div");
+    container.style.display = "flex";
+    container.style.flexWrap = "wrap";
+    container.style.gap = "20px";
+    container.style.padding = "20px";
+    container.style.justifyContent = "center";
+    container.style.width = "calc(100% - 160px)";
+    container.style.margin = "0 auto";
+    container.style.boxSizing = "border-box";
+    return container;
+}
 
-// 创建一个容器来装载这些元素
-const container = document.createElement("div");
-// 设置容器样式
-container.style.display = "flex";
-container.style.flexWrap = "wrap";
-container.style.gap = "20px";
-container.style.padding = "20px";
-container.style.justifyContent = "center"; // flex容器内的项目水平居中
-container.style.width = "calc(100% - 160px)"; // 减去左右边距
-container.style.margin = "0 auto"; // 容器本身水平居中
-container.style.boxSizing = "border-box";
-
-// 遍历视频卡片
-videoCards.forEach(card => {
+// 处理单个视频卡片
+function processVideoCard(card) {
     const newVideoCards = document.createElement("div");
+    setCardStyle(newVideoCards);
+    
+    // 处理视频封面
+    addCoverToCard(card, newVideoCards);
+    
+    // 处理视频标题
+    addTitleToCard(card, newVideoCards);
+    
+    // 处理作者信息
+    addAuthorToCard(card, newVideoCards);
+    
+    // 处理视频统计信息
+    addStatsToCard(card, newVideoCards);
+    
+    // 添加交互事件
+    addCardInteractions(card, newVideoCards);
+    
+    return newVideoCards;
+}
 
-    // 设置卡片的样式
-    newVideoCards.style.width = "18%";
-    newVideoCards.style.height = "100%";
-    newVideoCards.style.overflow = "hidden";
-    newVideoCards.style.borderRadius = "15px";
-    newVideoCards.style.padding = "10px";
-    newVideoCards.style.cursor = "pointer"; // 添加鼠标样式
-    newVideoCards.style.transition = "all 0.5s ease";
-    newVideoCards.style.transform = "scale(1)";
+// 设置卡片样式
+function setCardStyle(card) {
+    card.style.width = "18%";
+    card.style.height = "100%";
+    card.style.overflow = "hidden";
+    card.style.borderRadius = "15px";
+    card.style.padding = "10px";
+    card.style.cursor = "pointer";
+    card.style.transition = "all 0.5s ease";
+    card.style.transform = "scale(1)";
+}
 
-    // 获取原先卡片封面
-    const coverDiv = card.querySelector(".bili-video-card__cover");
-    const coverImg = coverDiv.querySelector("img");
-
-    // 创建一个新的视频封面标签
+// 添加封面
+function addCoverToCard(originalCard, newCard) {
+    const coverImg = originalCard.querySelector(".bili-video-card__cover img");
     const newCoverImg = document.createElement("img");
     newCoverImg.src = coverImg.src;
     newCoverImg.style.width = "100%";
     newCoverImg.style.height = "100%";
     newCoverImg.style.borderRadius = "15px";
-    // 将视频封面添加进视频卡片
-    newVideoCards.appendChild(newCoverImg);
+    newCard.appendChild(newCoverImg);
+}
 
-
-
-
-    // 获取原先卡片标题
-    const titleDiv = card.querySelector(".bili-video-card__info--right");
-    const titleH3 = titleDiv.querySelector("h3");
-    const titleA = titleH3.querySelector("a")
-    
-    // 创建新的视频标题
+// 添加标题
+function addTitleToCard(originalCard, newCard) {
+    const titleA = originalCard.querySelector(".bili-video-card__info--right h3 a");
     const newTitleH3 = document.createElement("h3");
-    newTitleH3.textContent = titleA.textContent
+    newTitleH3.textContent = titleA.textContent;
     newTitleH3.style.display = "-webkit-box";
     newTitleH3.style.webkitBoxOrient = "vertical";
-    newTitleH3.style.webkitLineClamp = "2"; // 限制为两行
+    newTitleH3.style.webkitLineClamp = "2";
     newTitleH3.style.overflow = "hidden";
     newTitleH3.style.textOverflow = "ellipsis";
     newTitleH3.style.height = "52.4px";
-    // 将标题添加进视频卡片
-    newVideoCards.appendChild(newTitleH3);
+    newCard.appendChild(newTitleH3);
+}
 
-
-
-
-
-    // 获取视频作者
-    const authorSpan = card.querySelector(".bili-video-card__info--author");
-    // 创建新的视频作者
+// 添加作者信息
+function addAuthorToCard(originalCard, newCard) {
+    const authorSpan = originalCard.querySelector(".bili-video-card__info--author");
     const newAuthorA = document.createElement("a");
     newAuthorA.textContent = authorSpan.textContent;
-    // 将作者添加进视频卡片
-    newVideoCards.appendChild(newAuthorA);
+    newAuthorA.style.cursor = "pointer";
+    newCard.appendChild(newAuthorA);
+}
 
-
-
-    // 获取视频播放量和弹幕数量
-    const detailDiv = card.querySelector(".bili-video-card__stats--left");
-    const detailSpans = detailDiv.querySelectorAll('span.bili-video-card__stats--text');
-    // 创建新的视频播放量和弹幕数量
+// 添加统计信息
+function addStatsToCard(originalCard, newCard) {
+    const detailSpans = originalCard.querySelectorAll('.bili-video-card__stats--left span.bili-video-card__stats--text');
     const newDetailP = document.createElement("p");
     newDetailP.textContent = `${detailSpans[0].textContent}播放 · ${detailSpans[1].textContent}弹幕`;
-    // 将播放量和弹幕数量添加进视频卡片
-    newVideoCards.appendChild(newDetailP);
+    newCard.appendChild(newDetailP);
+}
 
+// 添加交互事件
+function addCardInteractions(originalCard, newCard) {
+    const videoLink = originalCard.querySelector(".bili-video-card__info--right h3 a").href;
     
-
-    // 获取视频链接
-    const videoLink = titleA.href;
-    // 添加鼠标悬停事件
-    newVideoCards.addEventListener("mouseover", () => {
-        newVideoCards.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
-        newVideoCards.style.transform = "scale(1.02)";
+    newCard.addEventListener("mouseover", () => {
+        newCard.style.backgroundColor = "rgba(255, 255, 255, 0.3)";
+        newCard.style.transform = "scale(1.02)";
     });
-    newVideoCards.addEventListener("mouseout", () => {
-        newVideoCards.style.backgroundColor = "transparent";
-        newVideoCards.style.transform = "scale(1)";
+    
+    newCard.addEventListener("mouseout", () => {
+        newCard.style.backgroundColor = "transparent";
+        newCard.style.transform = "scale(1)";
     });
-    // 为视频卡片添加链接
-    newVideoCards.onclick = function() {
-        window.open(videoLink);
-    }
-    // 为作者链接添加样式和点击事件
-    newAuthorA.style.cursor = "pointer";
-    newAuthorA.addEventListener("click", (event) => {
-        event.stopPropagation(); // 阻止事件冒泡
-        const authorLink = card.querySelector(".bili-video-card__info--owner").href;
+    
+    newCard.onclick = () => window.open(videoLink);
+    
+    const authorLink = originalCard.querySelector(".bili-video-card__info--owner").href;
+    const authorElement = newCard.querySelector("a");
+    authorElement.addEventListener("click", (event) => {
+        event.stopPropagation();
         window.open(authorLink);
     });
+}
 
-    // 将克隆的div标签添加到容器中
-    container.appendChild(newVideoCards);
-});
+// 主函数
+function initializeHomepage() {
+    hideOriginalContent();
+    const container = createContainer();
+    const videoCards = document.querySelectorAll(".enable-no-interest");
+    
+    videoCards.forEach(card => {
+        const newCard = processVideoCard(card);
+        container.appendChild(newCard);
+    });
+    
+    document.body.insertBefore(container, document.body.firstChild);
+}
 
-// 将容器添加到页面中
-document.body.insertBefore(container, document.body.firstChild);
+// 执行主函数
+initializeHomepage();
