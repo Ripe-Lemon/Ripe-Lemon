@@ -19,13 +19,13 @@ function createContainer() {
     container.style.position = "absolute";
     container.style.flexWrap = "wrap";
     container.style.gap = "20px";
-    container.style.padding = "20px 10%";
+    container.style.padding = "20px 3%";
     container.style.justifyContent = "center";
     container.style.alignItems = "center";
     container.style.width = "100%";
-    container.style.margin = "0 auto";
+    container.style.marginTop = "70px";
     container.style.boxSizing = "border-box";
-    container.style.zIndex = "9999";
+    container.style.zIndex = "999";
     //container.style.backgroundColor = "rgba(255, 0, 0, 0.7)";
     return container;
 }
@@ -55,7 +55,7 @@ function processVideoCard(card) {
 
 // 设置卡片样式
 function setCardStyle(card) {
-    card.style.width = "18%";
+    card.style.width = "17%";
     card.style.height = "100%";
     card.style.justifyContent = "center";
     card.style.overflow = "hidden";
@@ -72,7 +72,7 @@ function addCoverToCard(originalCard, newCard) {
     const newCoverImg = document.createElement("img");
     newCoverImg.src = coverImg.src;
     newCoverImg.style.width = "100%";
-    newCoverImg.style.height = "100%";
+    newCoverImg.style.maxHeight = "56.25%";
     newCoverImg.style.borderRadius = "15px";
     newCard.appendChild(newCoverImg);
 }
@@ -88,15 +88,19 @@ function addTitleToCard(originalCard, newCard) {
     newTitleH3.style.overflow = "hidden";
     newTitleH3.style.textOverflow = "ellipsis";
     newTitleH3.style.height = "52.4px";
+    newTitleH3.style.paddingLeft = "5px";
+    newTitleH3.style.paddingRight = "5px";
     newCard.appendChild(newTitleH3);
 }
 
 // 添加作者信息
 function addAuthorToCard(originalCard, newCard) {
     const authorSpan = originalCard.querySelector(".bili-video-card__info--author");
+    const dateSpan = originalCard.querySelector(".bili-video-card__info--date");
     const newAuthorA = document.createElement("a");
-    newAuthorA.textContent = authorSpan.textContent;
+    newAuthorA.textContent = `${authorSpan.textContent} ${dateSpan.textContent}`;
     newAuthorA.style.cursor = "pointer";
+    newAuthorA.style.paddingLeft = "5px";
     newCard.appendChild(newAuthorA);
 }
 
@@ -105,6 +109,7 @@ function addStatsToCard(originalCard, newCard) {
     const detailSpans = originalCard.querySelectorAll('.bili-video-card__stats--left span.bili-video-card__stats--text');
     const newDetailP = document.createElement("p");
     newDetailP.textContent = `${detailSpans[0].textContent}播放 · ${detailSpans[1].textContent}弹幕`;
+    newDetailP.style.paddingLeft = "5px";
     newCard.appendChild(newDetailP);
 }
 
@@ -132,18 +137,29 @@ function addCardInteractions(originalCard, newCard) {
     });
 }
 
+// 添加header
+function addHeader() {
+    const header = document.querySelector(".bili-header.large-header");
+    header.style.zIndex = "9999";
+    children = header.children;
+    children[1].style.display = "none";
+    children[2].style.display = "none";
+    return header;
+
+}
+
 // 主函数
 function initializeHomepage() {
     hideOriginalContent();
     const container = createContainer();
     const videoCards = document.querySelectorAll(".enable-no-interest");
-    
     videoCards.forEach(card => {
         const newCard = processVideoCard(card);
         container.appendChild(newCard);
     });
     
     document.body.insertBefore(container, document.body.firstChild);
+    document.body.appendChild(addHeader());
 }
 
 // 执行主函数
