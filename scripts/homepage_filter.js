@@ -2,7 +2,13 @@
 function hideOriginalContent() {
     const allElements = document.body.children;
     for (let element of allElements) {
-        element.style.display = "none";
+        element.style.visibility = "hidden";
+        element.style.display = "absolute";
+        element.style.width = "0";
+        element.style.height = "0";
+        element.style.padding = "0";
+        element.style.margin = "0";
+        element.style.transform = "scale(0)";
     }
 }
 
@@ -10,13 +16,17 @@ function hideOriginalContent() {
 function createContainer() {
     const container = document.createElement("div");
     container.style.display = "flex";
+    container.style.position = "absolute";
     container.style.flexWrap = "wrap";
     container.style.gap = "20px";
-    container.style.padding = "20px";
+    container.style.padding = "20px 10%";
     container.style.justifyContent = "center";
-    container.style.width = "calc(100% - 160px)";
+    container.style.alignItems = "center";
+    container.style.width = "100%";
     container.style.margin = "0 auto";
     container.style.boxSizing = "border-box";
+    container.style.zIndex = "9999";
+    //container.style.backgroundColor = "rgba(255, 0, 0, 0.7)";
     return container;
 }
 
@@ -47,6 +57,7 @@ function processVideoCard(card) {
 function setCardStyle(card) {
     card.style.width = "18%";
     card.style.height = "100%";
+    card.style.justifyContent = "center";
     card.style.overflow = "hidden";
     card.style.borderRadius = "15px";
     card.style.padding = "10px";
@@ -137,3 +148,65 @@ function initializeHomepage() {
 
 // 执行主函数
 initializeHomepage();
+
+// 修改加载更多内容的函数
+async function loadMoreContent() {
+    // 获取当前container
+    const container = document.body.firstElementChild;
+    
+    // 连续触发两次加载
+    for(let i = 0; i < 10; i++) {
+        // 等待一段时间让B站的懒加载机制生效
+        await new Promise(resolve => setTimeout(resolve, 200));
+        
+        // 获取新加载的视频卡片
+        const allVideoCards = document.querySelectorAll(".enable-no-interest");
+        const existingCards = container.children.length;
+        
+        // 只处理新出现的卡片
+        for (let j = existingCards; j < allVideoCards.length; j++) {
+            const newCard = processVideoCard(allVideoCards[j]);
+            container.appendChild(newCard);
+        }
+    }
+}
+
+// 监听滚动事件
+window.addEventListener("scroll", function() {
+    // 获取文档总高度
+    const documentHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+    
+    // 获取视口高度
+    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+    
+    // 获取当前滚动位置
+    const scrollPosition = window.scrollY || window.pageYOffset;
+
+    // 设置触发的阈值，距离底部500px时触发
+    const threshold = 4000;
+
+    // 判断是否接近底部
+    if (documentHeight - windowHeight - scrollPosition <= threshold) {
+        loadMoreContent();
+    } 
+});
+
+// 处理页面内容不足时无法产生滚动条的情况
+function checkIfContentIsInsufficient() {
+    const documentHeight = document.documentElement.scrollHeight || document.body.scrollHeight;
+    const windowHeight = window.innerHeight || document.documentElement.clientHeight;
+
+    // 如果文档高度小于或等于视口高度，则没有滚动条
+    if (documentHeight <= windowHeight) {
+        loadMoreContent();
+    } 
+}
+
+// 页面加载时检查是否有足够内容
+window.addEventListener("load", checkIfContentIsInsufficient);
+
+// 监听窗口大小变化，可能导致页面内容变化
+window.addEventListener("resize", checkIfContentIsInsufficient);
+
+// 初次运行时检查内容是否足够滚动
+checkIfContentIsInsufficient();
