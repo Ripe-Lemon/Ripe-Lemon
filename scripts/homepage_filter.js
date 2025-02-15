@@ -171,9 +171,9 @@ async function loadMoreContent() {
     const container = document.body.firstElementChild;
     
     // 连续触发两次加载
-    for(let i = 0; i < 10; i++) {
+    for(let i = 0; i < 20; i++) {
         // 等待一段时间让B站的懒加载机制生效
-        await new Promise(resolve => setTimeout(resolve, 200));
+        await new Promise(resolve => setTimeout(resolve, 100));
         
         // 获取新加载的视频卡片
         const allVideoCards = document.querySelectorAll(".enable-no-interest");
