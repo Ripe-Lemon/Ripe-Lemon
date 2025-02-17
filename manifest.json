@@ -12,7 +12,8 @@
   "permissions": [
     "activeTab",
     "contextMenus",
-    "storage"
+    "storage",
+    "tabs"
   ],
 
   "browser_action": {
@@ -24,7 +25,7 @@
   "content_scripts": [
     {
       "matches": ["*://*.bilibili.com/"],
-      "js": ["/scripts/homepage_filter.js"]
+      "js": ["/functions/homepage/old_homepage_filter.js"]
     }
   ],
 
