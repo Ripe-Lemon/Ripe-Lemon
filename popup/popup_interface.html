@@ -12,11 +12,14 @@
 <body>
     <div class="flex flex-col">
         <div class="form-control">
-            <label class="label cursor-pointer">
-                <span class="label-text">首页净化</span>
-                <input id="homepageFilter" type="checkbox" class="toggle" />
-            </label>
+            <input type="text" placeholder="请输入联Ban清单的URL" class="input input-bordered w-full max-w-xs" id="getBanUrl"/>
+            <button class="btn">联Ban</button>
+            <h1>-----</h1>
+            <input type="text" placeholder="debug" class="input input-bordered w-full max-w-xs" id="getBanUrlTest"/>
+            <button class="btn" id="banTest">联Ban测试</button>
         </div>
     </div>
+
+    <script src="popup_interface.js"></script>
 </body>
 </html>

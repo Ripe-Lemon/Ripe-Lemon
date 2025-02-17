@@ -25,7 +25,7 @@
   "content_scripts": [
     {
       "matches": ["*://*.bilibili.com/"],
-      "js": ["/functions/homepage/old_homepage_filter.js"]
+      "js": ["/src/ban/test.js"]
     }
   ],
 
