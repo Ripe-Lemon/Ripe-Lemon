@@ -1,4 +1,4 @@
-let isLemonRiped = 1
+let isLemonRiped = true
 let originalHead = document.head.innerHTML
 let originalHomepage = document.body.innerHTML;
 let lemonHomepage = document.body.innerHTML;
