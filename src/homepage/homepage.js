@@ -3,6 +3,7 @@ let originalHead = document.head.innerHTML
 let originalHomepage = document.body.innerHTML;
 let lemonHomepage = document.body.innerHTML;
 let isgettingVideoCards = false
+let lastShowlist = ''
 
 // 初始化页面
 function initializeHomepage() {
@@ -134,10 +135,13 @@ function initializeHomepage() {
     //return originalHomepage;
 }
 
-
+function removeTrailingComma(str) {
+    return str.endsWith(',') ? str.slice(0, -1) : str;
+}
 // 获取视频数据
 function getVideoCards() {
-    const url = "https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd";
+    let url = "https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd?web_location=1430650&y_num=3&fresh_type=4&feed_version=V8&fresh_idx_1h=15&fetch_row=46&fresh_idx=15&brush=15&homepage_ver=1&ps=12&last_y_num=4&screen=1262-1279&seo_info=" + lastShowlist
+    url = removeTrailingComma(url)
     let cookies = document.cookie;
     const headers = new Headers({
         'Host': 'api.bilibili.com',
@@ -149,7 +153,8 @@ function getVideoCards() {
         'Sec-Fetch-Mode' : 'navigate',
         'Sec-Fetch-Site' : 'cross-site',
         'Sec-Fetch-User' : '?1',
-        'TE' : 'trailers'
+        'TE' : 'trailers',
+        'User-Agent' : navigator.userAgent,
     });
 
     fetch(url, {
@@ -180,6 +185,7 @@ function getVideoCards() {
 
 // 添加视频卡片
 function addVideoCard(videoData, container) {
+    lastShowlist += 'av_n_' + videoData.id + ',';
     if (videoData.business_info && Object.keys(videoData.business_info).length > 0) {
         console.log("videoData.business_info 不为空，退出 addVideoCard 功能。");
         return; // 退出函数
@@ -349,3 +355,27 @@ function checkIfContentIsInsufficient() {
         getVideoCards();
     } 
 }
+
+// 拦截并阻止发起者为 imageset 的所有网络请求
+(function() {
+    const originalFetch = window.fetch;
+    window.fetch = function() {
+        const url = arguments[0];
+        if (url.includes('imageset')) {
+            console.log('拦截到 imageset 请求:', url);
+            return Promise.resolve(new Response(null, { status: 403, statusText: 'Forbidden' }));
+        }
+        return originalFetch.apply(this, arguments);
+    };
+
+    const originalXHROpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function() {
+        const url = arguments[1];
+        if (url.includes('imageset')) {
+            console.log('拦截到 imageset 请求:', url);
+            this.abort();
+            return;
+        }
+        originalXHROpen.apply(this, arguments);
+    };
+})();

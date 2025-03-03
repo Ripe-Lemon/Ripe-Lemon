@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Ripe lemon",
-  "version": "0.0.7",
+  "version": "0.0.8",
 
   "description": "waaaaaaoooooooooo",
   "homepage_url": "https://github.com/Pycnocline/Ripe-Lemon",
@@ -14,7 +14,8 @@
     "contextMenus",
     "storage",
     "tabs",
-    "webRequest", 
+    "webRequest",
+    "webRequestBlocking", 
     "<all_urls>"
   ],
 
