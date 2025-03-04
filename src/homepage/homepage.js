@@ -1,31 +1,24 @@
 let isLemonRiped = true
-let originalHead = document.head.innerHTML
-let originalHomepage = document.body.innerHTML;
-let lemonHomepage = document.body.innerHTML;
 let isgettingVideoCards = false
 let lastShowlist = ''
 
+initializeHomepage();
+getVideoCards();
+
 // 初始化页面
 function initializeHomepage() {
+    let Header = addHeader();
+    document.querySelectorAll('head script').forEach(script => script.remove());
     document.head.innerHTML += `
         <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
         <script src="https://cdn.tailwindcss.com"></script>
     `;
     document.body.innerHTML = `
-        <div class="navbar bg-base-300">
-            <button class="btn btn-ghost text-xl navbarTitle" id="ripeLemonButton">🍋 BILIBILI</button>
-            <button class="btn btn-ghost text-xl navbarTitleOld" id="bilibiliButton">📺 bilibili</button>
-        </div>
-
         <div class="videoCardsContainer">
             
         </div>
 
         <style>
-            .navbar {
-                box-shadow: 0 4px 4px 0 rgba(0,0,0,0.5);
-            }
-
             .videoCardsContainer {
                 display: flex;
                 position: absolute;
@@ -38,6 +31,7 @@ function initializeHomepage() {
                 padding-top: 40px;
                 box-sizing: border-box;
                 background-color: rgba(0, 0, 0, 1);
+                margin-top: 60px;
             }
 
             
@@ -132,7 +126,21 @@ function initializeHomepage() {
         </style>
     `;
 
-    //return originalHomepage;
+    document.body.appendChild(Header);
+    setTimeout(() => {
+        getVideoCards();
+    }, 500);
+}
+
+// 添加header
+function addHeader() {
+    const header = document.querySelector(".bili-header.large-header");
+    header.style.zIndex = "9999";
+    children = header.children;
+    children[1].style.display = "none";
+    children[2].style.display = "none";
+    return header;
+
 }
 
 function removeTrailingComma(str) {
@@ -192,6 +200,7 @@ function addVideoCard(videoData, container) {
     }
     let videoCard = document.createElement('a');
     videoCard.href = videoData.uri
+    videoCard.target = "_blank"
     videoCard.className = "videoCard"
     videoCard.innerHTML = `
         <div class="videoCover">
@@ -200,7 +209,7 @@ function addVideoCard(videoData, container) {
         </div>
         <div class="detailContainer">
             <h2 class="videoTitle">${videoData.title}</h2>
-            <a href="https://space.bilibili.com/${videoData.owner.mid}" class="ownerName" onclick="stopPropagationClicked(event)">${videoData.owner.name}</a>
+            <a target="_blank" href="https://space.bilibili.com/${videoData.owner.mid}" class="ownerName" onclick="stopPropagationClicked(event)">${videoData.owner.name}</a>
             <p class="videoDetail">${videoData.stat.view}播放·${videoData.stat.like}喜欢·${videoData.stat.danmaku}弹幕</p>
             <p class="videoDetail">${timeAgo(videoData.pubdate)}</p>
         </div>
@@ -213,6 +222,7 @@ function addVideoCard(videoData, container) {
 function stopPropagationClicked(event) {
     // 阻止点击事件冒泡，这样不会触发整个卡片的点击跳转
     event.stopPropagation();
+    event.preventDefault(); // 阻止 <a> 的默认跳转行为
 }
   
 
@@ -275,52 +285,6 @@ function timeAgo(timestamp) {
     }
 }
 
-function changeToBilibili() {
-    document.head.innerHTML = originalHead
-    document.body.innerHTML = originalHomepage
-    document.head.innerHTML += `
-        <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
-        <script src="https://cdn.tailwindcss.com"></script>
-    `;
-    document.body.innerHTML = `
-        <div class="navbar bg-base-300">
-            <button class="btn btn-ghost text-xl navbarTitle" id="ripeLemonButton">🍋 BILIBILI</button>
-            <button class="btn btn-ghost text-xl navbarTitleOld" id="bilibiliButton">📺 bilibili</button>
-        </div>
-        <style>
-            .navebar{
-                position:absolute;
-                left:0;
-                up:0;
-            }
-            .navbarTitle{
-                font-size: 20px;
-                font-weight: bold;
-                color: rgb(255, 244, 87);
-            }
-            
-            .navbarTitleOld{
-                font-size: 20px;
-                font-weight: bold;
-                color: rgb(49, 197, 255);
-            }
-        </style>
-    ` + document.body.innerHTML
-    document.getElementById('ripeLemonButton').addEventListener('click', changeToRipeLemon);
-    document.getElementById('bilibiliButton').addEventListener('click', changeToBilibili);
-}
-
-function changeToRipeLemon() {
-    initializeHomepage();
-    getVideoCards();
-}
-
-initializeHomepage();
-getVideoCards();
-
-document.getElementById('ripeLemonButton').addEventListener('click', changeToRipeLemon);
-document.getElementById('bilibiliButton').addEventListener('click', changeToBilibili);
-
 // 监听滚动事件
 window.addEventListener("scroll", function() {
     // 获取文档总高度
@@ -354,28 +318,4 @@ function checkIfContentIsInsufficient() {
     if (documentHeight <= windowHeight) {
         getVideoCards();
     } 
-}
-
-// 拦截并阻止发起者为 imageset 的所有网络请求
-(function() {
-    const originalFetch = window.fetch;
-    window.fetch = function() {
-        const url = arguments[0];
-        if (url.includes('imageset')) {
-            console.log('拦截到 imageset 请求:', url);
-            return Promise.resolve(new Response(null, { status: 403, statusText: 'Forbidden' }));
-        }
-        return originalFetch.apply(this, arguments);
-    };
-
-    const originalXHROpen = XMLHttpRequest.prototype.open;
-    XMLHttpRequest.prototype.open = function() {
-        const url = arguments[1];
-        if (url.includes('imageset')) {
-            console.log('拦截到 imageset 请求:', url);
-            this.abort();
-            return;
-        }
-        originalXHROpen.apply(this, arguments);
-    };
-})();
+};
