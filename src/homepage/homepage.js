@@ -1,9 +1,8 @@
 let isLemonRiped = true
 let isgettingVideoCards = false
-let lastShowlist = ''
+let lastShowlist = '&last_showlist='
 
 initializeHomepage();
-getVideoCards();
 
 // 初始化页面
 function initializeHomepage() {
@@ -40,6 +39,7 @@ function initializeHomepage() {
                 display: flex;
                 flex-direction: column;
                 position: relative;
+                transition: all 0.3s ease;
             }
             
             .videoCard {
@@ -146,9 +146,10 @@ function initializeHomepage() {
     `;
 
     document.body.appendChild(Header);
+    getVideoCards();
     setTimeout(() => {
         getVideoCards();
-    }, 500);
+    }, 1000);
 }
 
 // 添加header
@@ -167,6 +168,7 @@ function removeTrailingComma(str) {
 }
 // 获取视频数据
 function getVideoCards() {
+    isgettingVideoCards = true;
     let url = "https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd?web_location=1430650&y_num=3&fresh_type=4&feed_version=V8&fresh_idx_1h=15&fetch_row=46&fresh_idx=15&brush=15&homepage_ver=1&ps=12&last_y_num=4&screen=1262-1279&seo_info=" + lastShowlist
     url = removeTrailingComma(url)
     let cookies = document.cookie;
@@ -209,7 +211,6 @@ function getVideoCards() {
         });
 }
 
-
 // 添加视频卡片
 function addVideoCard(videoData, container) {
     lastShowlist += 'av_n_' + videoData.id + ',';
@@ -218,17 +219,18 @@ function addVideoCard(videoData, container) {
         return;
     }
     let videoCardWrapper = document.createElement('div');
+    videoCardWrapper.id = videoData.id;
     videoCardWrapper.className = "videoCardWrapper";
     videoCardWrapper.innerHTML = `
         <div class="dropdown dropdown-hover cardLemonButton">
             <div tabindex="0" role="button" class="btn">···</div>
             <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow rounded-box w-52">
-                <li><a>不感兴趣</a></li>
-                <li><a>不想看此Up主</a></li>
+                <li><a href="#" class="hide-card">隐藏此卡片</a></li>
+                <li><a href="#" class="block-up">柠檬熟了</a></li>
             </ul>
         </div>
     `
-    
+
     let videoCard = document.createElement('a');
     videoCard.href = videoData.uri;
     videoCard.target = "_blank";
@@ -240,22 +242,32 @@ function addVideoCard(videoData, container) {
         </div>
         <div class="detailContainer">
             <h2 class="videoTitle">${videoData.title}</h2>
-            <a target="_blank" href="https://space.bilibili.com/${videoData.owner.mid}" class="ownerName" onclick="stopPropagationClicked(event)">${videoData.owner.name}</a>
+            <a target="_blank" href="https://space.bilibili.com/${videoData.owner.mid}" class="ownerName">${videoData.owner.name}</a>
             <p class="videoDetail">${videoData.stat.view}播放·${videoData.stat.like}喜欢·${videoData.stat.danmaku}弹幕</p>
             <p class="videoDetail">${timeAgo(videoData.pubdate)}</p>
         </div>
     `;
+    videoCardWrapper.querySelector(".hide-card").addEventListener("click", function () {
+        hideCard(videoData.id);
+    });
+    
+    videoCardWrapper.querySelector(".block-up").addEventListener("click", function () {
+        blockUp(videoData.owner.mid);
+    });
     videoCardWrapper.appendChild(videoCard);
     container.appendChild(videoCardWrapper);
     isgettingVideoCards = false;
 }
 
-// 阻止冒泡
-function stopPropagationClicked(event) {
-    // 阻止点击事件冒泡，这样不会触发整个卡片的点击跳转
-    event.stopPropagation();
+function hideCard(id) {
+    const card = document.getElementById(id);
+    if (card) card.style.display = "none";
 }
-  
+
+function blockUp(mid) {
+    console.log("Block user:", mid);
+}
+
 
 // 格式化视频时间
 function formatTime(seconds) {
@@ -333,7 +345,6 @@ window.addEventListener("scroll", function() {
     // 判断是否接近底部
     if (documentHeight - windowHeight - scrollPosition <= threshold) {
         if (!isgettingVideoCards) {
-            isgettingVideoCards = true
             getVideoCards();
         }
         
