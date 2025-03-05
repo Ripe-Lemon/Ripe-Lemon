@@ -212,10 +212,14 @@ function getVideoCards() {
 }
 
 // 添加视频卡片
-function addVideoCard(videoData, container) {
+async function addVideoCard(videoData, container) {
     lastShowlist += 'av_n_' + videoData.id + ',';
     if (videoData.business_info && Object.keys(videoData.business_info).length > 0) {
         console.log("videoData.business_info 不为空，退出 addVideoCard 功能。");
+        return;
+    }
+    if (await isInBanList(videoData.owner.mid)) {
+        console.log("识别到BanList内UP，跳过此卡片");
         return;
     }
     let videoCardWrapper = document.createElement('div');
@@ -252,6 +256,7 @@ function addVideoCard(videoData, container) {
     });
     
     videoCardWrapper.querySelector(".block-up").addEventListener("click", function () {
+        hideCard(videoData.id);
         blockUp(videoData.owner.mid);
     });
     videoCardWrapper.appendChild(videoCard);
@@ -264,10 +269,22 @@ function hideCard(id) {
     if (card) card.style.display = "none";
 }
 
-function blockUp(mid) {
-    console.log("Block user:", mid);
+function blockUp(mid) {    
+    browser.storage.local.get("banList").then(data => {
+        let newBanList = data.banList || ""; // 处理空值
+        newBanList += mid + ","; 
+        browser.storage.local.set({
+            banList: newBanList
+        });
+    });
 }
 
+async function isInBanList(number) {
+    let data = await browser.storage.local.get("banList");
+    let currentBanList = data.banList || ""; // 确保 banList 存在
+    const numSet = new Set(currentBanList.split(","));
+    return numSet.has(String(number));
+}
 
 // 格式化视频时间
 function formatTime(seconds) {

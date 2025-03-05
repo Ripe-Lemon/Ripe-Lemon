@@ -1,7 +1,23 @@
-document.getElementById('banTest').addEventListener('click', function() {  // 修改为正确的ID
-    // 发送消息到页面端脚本
-    browser.tabs.sendMessage(tabs[0].id, {
-        action: 'ban',
-        banId: document.getElementById('getBanUrlTest').value
-    });
-});
+function saveOptions() {
+  browser.storage.local.set({
+    banList: document.querySelector("#getBanID").value,
+  });
+}
+
+function restoreOptions() {
+  function setCurrentChoice(result) {
+    document.querySelector("#getBanID").value = result.banList || "";
+  }
+
+  function onError(error) {
+    console.log(`Error: ${error}`);
+  }
+
+  var getting = browser.storage.local.get("banList");
+  getting.then(setCurrentChoice, onError);
+}
+
+document.addEventListener("DOMContentLoaded", restoreOptions);
+document.querySelector('.saveBanList').addEventListener('click', function() {
+    saveOptions();
+  });
