@@ -34,9 +34,16 @@ function initializeHomepage() {
                 margin-top: 60px;
             }
 
+            .videoCardWrapper {
+                width: 18%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                position: relative;
+            }
             
             .videoCard {
-                width: 18%;
+                width: 100%;
                 height: 100%;
                 display: flex;
                 flex-direction: column;
@@ -116,12 +123,24 @@ function initializeHomepage() {
                 color: rgb(49, 197, 255);
             }
             
-            .cardLemonButton{
-                right: 8px;
-                bottom: 8px;
+            .cardLemonButton {
                 position: absolute;
+                right: 15px;
+                bottom: 15px;
                 z-index: 200;
-                border-radius: 15px;
+            }
+
+            .cardLemonButton .btn {
+                background-color: rgba(0, 0, 0, 0);
+                border: none;
+                min-height: 32px;
+                height: 32px;
+                padding: 0 10px;
+            }
+
+            .cardLemonButton .dropdown-content {
+                min-width: 200px;
+                background-color: rgba(0, 0, 0, 1);
             }
         </style>
     `;
@@ -196,12 +215,24 @@ function addVideoCard(videoData, container) {
     lastShowlist += 'av_n_' + videoData.id + ',';
     if (videoData.business_info && Object.keys(videoData.business_info).length > 0) {
         console.log("videoData.business_info 不为空，退出 addVideoCard 功能。");
-        return; // 退出函数
+        return;
     }
+    let videoCardWrapper = document.createElement('div');
+    videoCardWrapper.className = "videoCardWrapper";
+    videoCardWrapper.innerHTML = `
+        <div class="dropdown dropdown-hover cardLemonButton">
+            <div tabindex="0" role="button" class="btn">···</div>
+            <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow rounded-box w-52">
+                <li><a>不感兴趣</a></li>
+                <li><a>不想看此Up主</a></li>
+            </ul>
+        </div>
+    `
+    
     let videoCard = document.createElement('a');
-    videoCard.href = videoData.uri
-    videoCard.target = "_blank"
-    videoCard.className = "videoCard"
+    videoCard.href = videoData.uri;
+    videoCard.target = "_blank";
+    videoCard.className = "videoCard";
     videoCard.innerHTML = `
         <div class="videoCover">
             <img class="videoCoverImg" src="${videoData.pic}" alt="${videoData.title}" />
@@ -214,15 +245,15 @@ function addVideoCard(videoData, container) {
             <p class="videoDetail">${timeAgo(videoData.pubdate)}</p>
         </div>
     `;
-    container.appendChild(videoCard);
-    isgettingVideoCards = false
+    videoCardWrapper.appendChild(videoCard);
+    container.appendChild(videoCardWrapper);
+    isgettingVideoCards = false;
 }
 
 // 阻止冒泡
 function stopPropagationClicked(event) {
     // 阻止点击事件冒泡，这样不会触发整个卡片的点击跳转
     event.stopPropagation();
-    event.preventDefault(); // 阻止 <a> 的默认跳转行为
 }
   
 
