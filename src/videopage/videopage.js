@@ -1,6 +1,4 @@
-document.addEventListener("DOMContentLoaded", function() {
-    initializeVideopage()
-});
+initializeVideopage()
 
 const observer = new ResizeObserver(() => {
     console.log("页面高度发生变化");
