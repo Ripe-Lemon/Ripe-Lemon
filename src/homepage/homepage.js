@@ -16,7 +16,7 @@ function initializeHomepage() {
         <div class="videoCardsContainer">
             
         </div>
-
+        
         <style>
             .videoCardsContainer {
                 display: flex;
@@ -93,6 +93,7 @@ function initializeHomepage() {
 
             .ownerName {
                 padding-top: 5px;
+                color: rgb(163, 163, 163);
                 font-size: 15px;
                 transition: all 0.3s ease;
             }
@@ -109,18 +110,6 @@ function initializeHomepage() {
                 background-color: rgba(0, 0, 0, 0.8);
                 padding-left: 5px;
                 padding-right: 5px;
-            }
-            
-            .navbarTitle{
-                font-size: 20px;
-                font-weight: bold;
-                color: rgb(255, 244, 87);
-            }
-            
-            .navbarTitleOld{
-                font-size: 20px;
-                font-weight: bold;
-                color: rgb(49, 197, 255);
             }
             
             .cardLemonButton {
@@ -141,6 +130,11 @@ function initializeHomepage() {
             .cardLemonButton .dropdown-content {
                 min-width: 200px;
                 background-color: rgba(0, 0, 0, 1);
+            }
+            
+            .videoDetail {
+                font-size: 13px;
+                color: rgb(163, 163, 163);
             }
         </style>
     `;

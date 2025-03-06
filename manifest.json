@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Ripe lemon",
-  "version": "0.0.12",
+  "version": "0.1.0",
 
   "description": "waaaaaaoooooooooo",
   "homepage_url": "https://github.com/Pycnocline/Ripe-Lemon",
@@ -33,6 +33,10 @@
     {
       "matches": ["*://www.bilibili.com/?*"],
       "js": ["/src/homepage/homepage.js"]
+    },
+    {
+      "matches": ["*://www.bilibili.com/video*"],
+      "js": ["/src/videopage/videopage.js"]
     }
   ],
 
