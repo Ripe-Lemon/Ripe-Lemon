@@ -1,3 +1,8 @@
+document.addEventListener("DOMContentLoaded", restoreOptions);
+document.querySelector('.saveBanList').addEventListener('click', function() {
+  saveOptions();
+});
+
 function saveOptions() {
   browser.storage.local.set({
     banList: document.querySelector("#getBanID").value,
@@ -16,8 +21,3 @@ function restoreOptions() {
   var getting = browser.storage.local.get("banList");
   getting.then(setCurrentChoice, onError);
 }
-
-document.addEventListener("DOMContentLoaded", restoreOptions);
-document.querySelector('.saveBanList').addEventListener('click', function() {
-    saveOptions();
-  });
