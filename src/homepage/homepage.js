@@ -40,6 +40,8 @@ function initializeHomepage() {
                 flex-direction: column;
                 position: relative;
                 transition: all 0.3s ease;
+                border-radius: 15px;
+                min-width: 400px;
             }
             
             .videoCard {
@@ -55,10 +57,12 @@ function initializeHomepage() {
                 transition: all 0.5s ease;
                 scale: 1;
             }
-            .videoCard:hover {
-                background-color: rgba(255, 255, 255, 0.35);
+
+            .videoCardWrapper:hover {
+                background-color: rgba(255, 255, 255, 0.25);
                 scale: 1.05;
             }
+
             .videoCover {
                 width: 100%;
                 height: 0;
@@ -107,9 +111,10 @@ function initializeHomepage() {
                 position: absolute;
                 z-index: 100;
                 border-radius: 15px;
-                background-color: rgba(0, 0, 0, 0.8);
+                background-color: rgba(0, 0, 0, 0.5);
                 padding-left: 5px;
                 padding-right: 5px;
+                backdrop-filter: blur(10px);
             }
             
             .cardLemonButton {
@@ -129,13 +134,15 @@ function initializeHomepage() {
 
             .cardLemonButton .dropdown-content {
                 min-width: 200px;
-                background-color: rgba(0, 0, 0, 1);
+                background-color: rgba(0, 0, 0, 0.5);
+                backdrop-filter: blur(10px);
             }
             
             .videoDetail {
                 font-size: 13px;
                 color: rgb(163, 163, 163);
             }
+            
         </style>
     `;
 
@@ -220,7 +227,7 @@ async function addVideoCard(videoData, container) {
     videoCardWrapper.id = videoData.id;
     videoCardWrapper.className = "videoCardWrapper";
     videoCardWrapper.innerHTML = `
-        <div class="dropdown dropdown-hover cardLemonButton">
+        <div class="dropdown dropdown-top dropdown-end dropdown-hover cardLemonButton">
             <div tabindex="0" role="button" class="btn">···</div>
             <ul tabindex="0" class="dropdown-content z-[1] menu p-2 shadow rounded-box w-52">
                 <li><a href="#" class="hide-card">隐藏此卡片</a></li>
