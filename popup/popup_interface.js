@@ -3,7 +3,7 @@ document.querySelector('.saveBanList').addEventListener('click', function() {
   saveOptions();
 });
 document.querySelector('.getBanList').addEventListener('click', function() {
-  saveOptions();
+  getBanListRaw();
 });
 
 function saveOptions() {
@@ -16,8 +16,8 @@ function getBanListRaw() {
   let url = document.querySelector("#getBanIDFromRaw").value
   fetch(url)
     .then(response => response.text())
-    .then(text => {
-      document.querySelector("#getBanID").value = text
+    .then(data => {
+      document.querySelector("#getBanID").value = data
     })
     .then(saveOptions)
 }
