@@ -142,15 +142,11 @@ function initializeHomepage() {
                 font-size: 13px;
                 color: rgb(163, 163, 163);
             }
-            
         </style>
     `;
 
     document.body.appendChild(Header);
-    getVideoCards();
-    setTimeout(() => {
-        getVideoCards();
-    }, 1000);
+    pushVideoCard(3)
 }
 
 // 添加header
@@ -168,8 +164,7 @@ function removeTrailingComma(str) {
     return str.endsWith(',') ? str.slice(0, -1) : str;
 }
 // 获取视频数据
-function getVideoCards() {
-    isgettingVideoCards = true;
+async function getVideoCards() {
     let url = "https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd?web_location=1430650&y_num=3&fresh_type=4&feed_version=V8&fresh_idx_1h=15&fetch_row=46&fresh_idx=15&brush=15&homepage_ver=1&ps=12&last_y_num=4&screen=1262-1279&seo_info=" + lastShowlist
     url = removeTrailingComma(url)
     let cookies = document.cookie;
@@ -210,6 +205,16 @@ function getVideoCards() {
         .catch(error => {
             console.error('哇袄！！获取B站视频请求失败了捏：', error);
         });
+}
+
+// 多次获取视频卡片
+async function pushVideoCard(times) {
+    let currentTimes = 0;
+    while (currentTimes < times) {
+        isgettingVideoCards = true;
+        await getVideoCards();
+        currentTimes += 1
+    }
 }
 
 // 添加视频卡片
@@ -363,7 +368,7 @@ window.addEventListener("scroll", function() {
     // 判断是否接近底部
     if (documentHeight - windowHeight - scrollPosition <= threshold) {
         if (!isgettingVideoCards) {
-            getVideoCards();
+            pushVideoCard(2);
         }
         
     } 
@@ -376,6 +381,6 @@ function checkIfContentIsInsufficient() {
 
     // 如果文档高度小于或等于视口高度，则没有滚动条
     if (documentHeight <= windowHeight) {
-        getVideoCards();
+        pushVideoCard(2);
     } 
 };
