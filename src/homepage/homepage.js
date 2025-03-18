@@ -18,7 +18,7 @@ function initializeHomepage() {
             <ul class="menu bg-base-200 rounded-box">
                 <li>
                     <a class="tooltip tooltip-left refreshVideoCards" data-tip="刷新" onclick="refreshVideoCards()">
-                        <i class='bx bx-refresh'></i>
+                        <i class='bx bx-refresh sidebarIcon'></i>
                     </a>
                 </li>
             </ul>
@@ -37,7 +37,15 @@ function initializeHomepage() {
                 transform: translateY(-50%);
                 display: flex;
             }
+            
+            .refreshVideoCards {
+                z-index: 1100;
+            }
 
+            .sidebarIcon {
+                font-size: 18px;
+            }
+                
             .videoCardsContainer {
                 display: flex;
                 position: absolute;
