@@ -11,13 +11,33 @@ function initializeHomepage() {
     document.head.innerHTML += `
         <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.23/dist/full.min.css" rel="stylesheet" type="text/css" />
         <script src="https://cdn.tailwindcss.com"></script>
+        <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     `;
     document.body.innerHTML = `
+        <div class="sidebar">
+            <ul class="menu bg-base-200 rounded-box">
+                <li>
+                    <a class="tooltip tooltip-left refreshVideoCards" data-tip="刷新" onclick="refreshVideoCards()">
+                        <i class='bx bx-refresh'></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
         <div class="videoCardsContainer">
             
         </div>
         
         <style>
+            .sidebar {
+                z-index: 1000;
+                position: fixed;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                display: flex;
+            }
+
             .videoCardsContainer {
                 display: flex;
                 position: absolute;
@@ -144,9 +164,11 @@ function initializeHomepage() {
             }
         </style>
     `;
-
+    document.querySelector(".refreshVideoCards").addEventListener("click", function () {
+        refreshVideoCards();
+    });
     document.body.appendChild(Header);
-    pushVideoCard(3)
+    pushVideoCards(3)
 }
 
 // 添加header
@@ -163,6 +185,7 @@ function addHeader() {
 function removeTrailingComma(str) {
     return str.endsWith(',') ? str.slice(0, -1) : str;
 }
+
 // 获取视频数据
 async function getVideoCards() {
     let url = "https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd?web_location=1430650&y_num=3&fresh_type=4&feed_version=V8&fresh_idx_1h=15&fetch_row=46&fresh_idx=15&brush=15&homepage_ver=1&ps=12&last_y_num=4&screen=1262-1279&seo_info=" + lastShowlist
@@ -208,13 +231,24 @@ async function getVideoCards() {
 }
 
 // 多次获取视频卡片
-async function pushVideoCard(times) {
+async function pushVideoCards(times) {
     let currentTimes = 0;
     while (currentTimes < times) {
         isgettingVideoCards = true;
         await getVideoCards();
         currentTimes += 1
     }
+}
+
+// 清空视频卡片
+function clearVideoCards() {
+    let videoCardsContainer = document.querySelector('.videoCardsContainer');
+    videoCardsContainer.innerHTML = '';
+}
+
+function refreshVideoCards() {
+    clearVideoCards();
+    pushVideoCards(3);
 }
 
 // 添加视频卡片
@@ -368,7 +402,7 @@ window.addEventListener("scroll", function() {
     // 判断是否接近底部
     if (documentHeight - windowHeight - scrollPosition <= threshold) {
         if (!isgettingVideoCards) {
-            pushVideoCard(2);
+            pushVideoCards(2);
         }
         
     } 
@@ -381,6 +415,6 @@ function checkIfContentIsInsufficient() {
 
     // 如果文档高度小于或等于视口高度，则没有滚动条
     if (documentHeight <= windowHeight) {
-        pushVideoCard(2);
+        pushVideoCards(2);
     } 
 };
