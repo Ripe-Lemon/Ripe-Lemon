@@ -1,11 +1,12 @@
 let isLemonRiped = true
 let isgettingVideoCards = false
 let lastShowlist = '&last_showlist='
-
+let showedvideoCards = []
 initializeHomepage();
 
 // 初始化页面
 function initializeHomepage() {
+    showedvideoCards = []
     let Header = addHeader();
     document.querySelectorAll('head script').forEach(script => script.remove());
     document.head.innerHTML += `
@@ -59,6 +60,7 @@ function initializeHomepage() {
                 box-sizing: border-box;
                 background-color: rgba(0, 0, 0, 1);
                 margin-top: 60px;
+                min-height: 100vh;
             }
 
             .videoCardWrapper {
@@ -129,6 +131,7 @@ function initializeHomepage() {
                 font-size: 15px;
                 transition: all 0.3s ease;
             }
+
             .ownerName:hover {
                 color: rgb(49, 197, 255);
             }
@@ -196,8 +199,8 @@ function removeTrailingComma(str) {
 
 // 获取视频数据
 async function getVideoCards() {
-    let url = "https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd?web_location=1430650&y_num=3&fresh_type=4&feed_version=V8&fresh_idx_1h=15&fetch_row=46&fresh_idx=15&brush=15&homepage_ver=1&ps=12&last_y_num=4&screen=1262-1279&seo_info=" + lastShowlist
-    url = removeTrailingComma(url)
+    let url = "https://api.bilibili.com/x/web-interface/wbi/index/top/feed/rcmd?web_location=1430650&y_num=3&fresh_type=4&feed_version=V8&fresh_idx_1h=15&fetch_row=46&fresh_idx=15&brush=15&homepage_ver=1&ps=12&last_y_num=4&screen=1262-1279" + lastShowlist
+    url = removeTrailingComma(url) + "&uniq_id=1178487177961&w_rid=d05d5cf4cca4456e88f64b6f05379d9f&wts=1742401323";
     let cookies = document.cookie;
     const headers = new Headers({
         'Host': 'api.bilibili.com',
@@ -263,13 +266,18 @@ function refreshVideoCards() {
 async function addVideoCard(videoData, container) {
     lastShowlist += 'av_n_' + videoData.id + ',';
     if (videoData.business_info && Object.keys(videoData.business_info).length > 0) {
-        console.log("videoData.business_info 不为空，退出 addVideoCard 功能。");
+        console.log("videoData.business_info 不为空，不添加广告卡片。");
         return;
     }
     if (await isInBanList(videoData.owner.mid)) {
-        console.log("识别到BanList内UP，跳过此卡片");
+        console.log("识别到BanList内UP:" + videoData.owner.mid + "，跳过此卡片");
         return;
     }
+    if (showedvideoCards.includes(videoData.id)) {
+        console.log("识别到重复卡片:" + videoData.id + "，跳过此卡片");``
+        return;
+    }
+    showedvideoCards.push(videoData.id);
     let videoCardWrapper = document.createElement('div');
     videoCardWrapper.id = videoData.id;
     videoCardWrapper.className = "videoCardWrapper";
