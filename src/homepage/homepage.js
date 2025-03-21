@@ -16,14 +16,32 @@ function initializeHomepage() {
     `;
     document.body.innerHTML = `
         <div class="sidebar">
-            <ul class="menu bg-base-200 rounded-box">
+            <ul class="menu bg-base-200 rounded-box sidebarList">
                 <li>
-                    <a class="tooltip tooltip-left refreshVideoCards" data-tip="刷新" onclick="refreshVideoCards()">
+                    <a class="tooltip tooltip-left settings" data-tip="设置"  onclick="settings.showModal()">
+                        <i class='bx bx-cog sidebarIcon'></i>
+                    </a>
+                </li>
+                <li>
+                    <a class="tooltip tooltip-left refreshVideoCards" data-tip="刷新">
                         <i class='bx bx-refresh sidebarIcon'></i>
                     </a>
                 </li>
             </ul>
         </div>
+
+        <dialog id="settings" class="modal">
+            <div class="modal-box">
+                <div class="settingsPage">
+                    <h1>设置</h1>
+                    <h2>—————————————————————————————————</h2>
+                </div>
+            </div>
+            <form method="dialog" class="modal-backdrop">
+                <button></button>
+            </form>
+        </dialog>
+
 
         <div class="videoCardsContainer">
             
@@ -33,10 +51,16 @@ function initializeHomepage() {
             .sidebar {
                 z-index: 1000;
                 position: fixed;
-                right: 10px;
+                right: 30px;
                 top: 50%;
                 transform: translateY(-50%);
                 display: flex;
+            }
+            
+            .sidebarList {
+                gap: 5px;
+                justify-content: center;
+                align-items: center;
             }
             
             .refreshVideoCards {
@@ -44,7 +68,9 @@ function initializeHomepage() {
             }
 
             .sidebarIcon {
-                font-size: 18px;
+                font-size: 22px;
+                margin: 0px;
+                a
             }
                 
             .videoCardsContainer {
@@ -64,7 +90,7 @@ function initializeHomepage() {
             }
 
             .videoCardWrapper {
-                width: 18%;
+                width: 15%;
                 height: 100%;
                 display: flex;
                 flex-direction: column;
@@ -117,6 +143,7 @@ function initializeHomepage() {
 
             .videoTitle {
                 font-size: 18px;
+                margin-top: 5px;
                 display: -webkit-box;
                 -webkit-box-orient: vertical;
                 -webkit-line-clamp: 2;
