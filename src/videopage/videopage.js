@@ -16,6 +16,8 @@ async function initializeVideopage() {
         }
     });
 
+    getCurrentUserNickname();
+
     console.log("初始化页面完成");
 }
 
@@ -54,6 +56,7 @@ function observeDOM(targetNode) {
         for (let mutation of mutationsList) {
             console.log('页面或 shadowRoot 发生变化:', mutation);
             removeAd();
+            hideBlockedUsers()
 
             // 处理新增节点，检查是否包含 shadowRoot
             mutation.addedNodes.forEach(node => {
@@ -66,4 +69,47 @@ function observeDOM(targetNode) {
     });
 
     observer.observe(targetNode, config);
+}
+
+// 隐藏屏蔽的人
+async function hideBlockedUsers() {
+    let hostElement = document.querySelector('bili-comments');
+    if (!hostElement || !hostElement.shadowRoot) return;
+
+    let commentThreads = hostElement.shadowRoot.querySelectorAll('bili-comment-thread-renderer');
+
+    for (let thread of commentThreads) {
+        if (!thread.shadowRoot) continue;
+
+        let biliCommentRenderer = thread.shadowRoot.querySelector('bili-comment-renderer');
+        if (!biliCommentRenderer || !biliCommentRenderer.shadowRoot) continue;
+
+        let commentsInfo = biliCommentRenderer.shadowRoot.querySelector('bili-comment-user-info');
+        if (!commentsInfo || !commentsInfo.shadowRoot) continue;
+
+        let userNameElement = commentsInfo.shadowRoot.querySelector('#user-name');
+        if (!userNameElement) continue;
+
+        let userId = userNameElement.getAttribute('data-user-profile-id');
+        if (!userId) continue;
+
+        if (await isInBanList(userId)) {
+            thread.style.display = "none";
+        }
+    }
+}
+
+
+async function isInBanList(number) {
+    let data = await browser.storage.local.get("banList");
+    let currentBanList = data.banList || {}; // 确保 banList 存在
+    isIn = number in currentBanList;
+    return isIn;
+}
+
+async function getCurrentUserNickname() {
+    let currentUserNickName = document.querySelector(".nickname-item.light").textContent;
+    browser.storage.local.set({
+        currentUserNickName: currentUserNickName,
+    });
 }

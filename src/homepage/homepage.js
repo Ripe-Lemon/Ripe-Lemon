@@ -33,7 +33,7 @@ function initializeHomepage() {
         <dialog id="settings" class="modal">
             <div class="modal-box">
                 <div class="settingsPage">
-                    <h1>设置</h1>
+                    <h1>主页设置</h1>
                     <h2>—————————————————————————————————</h2>
                 </div>
             </div>
@@ -206,7 +206,8 @@ function initializeHomepage() {
         refreshVideoCards();
     });
     document.body.appendChild(Header);
-    pushVideoCards(3)
+    getCurrentUserNickname();
+    pushVideoCards(3);
 }
 
 // 添加header
@@ -354,8 +355,15 @@ function hideCard(id) {
 
 function blockUp(mid) {    
     browser.storage.local.get("banList").then(data => {
-        let newBanList = data.banList || ""; // 处理空值
-        newBanList += mid + ","; 
+        let newBanList = {};
+        newBanList = data.banList || {}; // 处理空值
+        let currentUserNickName = document.querySelector(".nickname-item.light").textContent;
+        if (!newBanList[mid]) {
+            newBanList[mid] = []; // 如果该 ID 不存在，则创建一个数组
+        }
+        if (!newBanList[mid].includes(currentUserNickName)) {
+            newBanList[mid].push(currentUserNickName); // 避免重复添加同一用户
+        }
         browser.storage.local.set({
             banList: newBanList
         });
@@ -364,9 +372,9 @@ function blockUp(mid) {
 
 async function isInBanList(number) {
     let data = await browser.storage.local.get("banList");
-    let currentBanList = data.banList || ""; // 确保 banList 存在
-    const numSet = new Set(currentBanList.split(","));
-    return numSet.has(String(number));
+    let currentBanList = data.banList || {}; // 确保 banList 存在
+    isIn = number in currentBanList;
+    return isIn;
 }
 
 // 格式化视频时间
@@ -461,3 +469,10 @@ function checkIfContentIsInsufficient() {
         pushVideoCards(2);
     } 
 };
+
+async function getCurrentUserNickname() {
+    let currentUserNickName = document.querySelector(".nickname-item.light").textContent;
+    browser.storage.local.set({
+        currentUserNickName: currentUserNickName,
+    });
+}

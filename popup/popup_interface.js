@@ -7,8 +7,13 @@ document.querySelector('.getBanList').addEventListener('click', function() {
 });
 
 function saveOptions() {
+  if (document.querySelector("#getBanID").value === "") {
+    browser.storage.local.set({
+      banList: {},
+    });
+  }
   browser.storage.local.set({
-    banList: document.querySelector("#getBanID").value,
+    banList: JSON.parse(document.querySelector("#getBanID").value),
   });
 }
 
@@ -17,20 +22,27 @@ function getBanListRaw() {
   fetch(url)
     .then(response => response.text())
     .then(data => {
-      document.querySelector("#getBanID").value = data
+      document.querySelector("#getBanID").value = data;
     })
     .then(saveOptions)
 }
 
 function restoreOptions() {
   function setCurrentChoice(result) {
-    document.querySelector("#getBanID").value = result.banList || "";
+    document.querySelector("#getBanID").value = JSON.stringify(result.banList) || "";
   }
 
   function onError(error) {
     console.log(`Error: ${error}`);
   }
 
+  function setUserNickname(result) {
+    document.querySelector("#currentUserNickname").value = result.currentUserNickName || "";
+  }
+
   var getting = browser.storage.local.get("banList");
   getting.then(setCurrentChoice, onError);
+
+  let NickName = browser.storage.local.get("currentUserNickName");
+  NickName.then(setUserNickname, onError);
 }
