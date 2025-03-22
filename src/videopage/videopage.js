@@ -95,6 +95,8 @@ async function hideBlockedUsers() {
 
         if (await isInBanList(userId)) {
             thread.style.display = "none";
+        } else {
+            await addLemonButton(biliCommentRenderer, userId) // 添加柠檬按钮
         }
     }
 }
@@ -112,4 +114,46 @@ async function getCurrentUserNickname() {
     browser.storage.local.set({
         currentUserNickName: currentUserNickName,
     });
+}
+
+async function addLemonButton(biliCommentRenderer, userId) {
+    console.log("添加柠檬按钮");
+    let biliCommentActionButtonsRenderer = biliCommentRenderer.shadowRoot.querySelector('bili-comment-action-buttons-renderer');
+    if (!biliCommentActionButtonsRenderer) return;
+
+    let biliCommentMenu = biliCommentActionButtonsRenderer.shadowRoot.querySelector('bili-comment-menu');
+    if (!biliCommentMenu) return;
+
+    let options = biliCommentMenu.shadowRoot.querySelector('#options');
+    if (!options) return;
+    if (options.classList.contains('lemon-button-added')) return;
+    options.classList.add('lemon-button-added');
+    let lemonButton = document.createElement('li');
+    lemonButton.textContent = "柠檬熟了";
+    lemonButton.addEventListener('click', function () {
+        console.log("点击了柠檬按钮");
+        blockUp(userId);
+    });
+    options.appendChild(lemonButton);
+}
+
+async function blockUp(mid) {
+    nickName = await browser.storage.local.get("currentUserNickName");
+    console.log(nickName.currentUserNickName);
+    browser.storage.local.get("banList").then(data => {
+        let newBanList = {};
+        newBanList = data.banList || {}; // 处理空值
+        let currentUserNickName = nickName.currentUserNickName;
+        if (!newBanList[mid]) {
+            newBanList[mid] = []; // 如果该 ID 不存在，则创建一个数组
+        }
+        if (!newBanList[mid].includes(currentUserNickName)) {
+            newBanList[mid].push(currentUserNickName); // 避免重复添加同一用户
+        }
+        browser.storage.local.set({
+            banList: newBanList
+        });
+    });
+
+    hideBlockedUsers();
 }

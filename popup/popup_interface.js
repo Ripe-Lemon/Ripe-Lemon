@@ -43,6 +43,6 @@ function restoreOptions() {
   var getting = browser.storage.local.get("banList");
   getting.then(setCurrentChoice, onError);
 
-  let NickName = browser.storage.local.get("currentUserNickName");
-  NickName.then(setUserNickname, onError);
+  let nickName = browser.storage.local.get("currentUserNickName");
+  nickName.then(setUserNickname, onError);
 }
