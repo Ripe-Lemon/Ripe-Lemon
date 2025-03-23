@@ -5,7 +5,7 @@ let showedvideoCards = []
 initializeHomepage();
 
 // 初始化页面
-function initializeHomepage() {
+async function initializeHomepage() {
     showedvideoCards = []
     let Header = addHeader();
     document.querySelectorAll('head script').forEach(script => script.remove());
@@ -33,8 +33,12 @@ function initializeHomepage() {
         <dialog id="settings" class="modal">
             <div class="modal-box">
                 <div class="settingsPage">
-                    <h1>主页设置</h1>
+                    <h1 id="settingsTitle">设置</h1>
                     <h2>—————————————————————————————————</h2>
+                    <div class="settingsContentContainer">
+                        <p class="setttingsContent">净化顶部导航栏（刷新页面后生效）</p>
+                        <input type="checkbox" class="toggle" />
+                    </div>
                 </div>
             </div>
             <form method="dialog" class="modal-backdrop">
@@ -44,10 +48,23 @@ function initializeHomepage() {
 
 
         <div class="videoCardsContainer">
-            
+
         </div>
         
         <style>
+            .settingsContentContainer {
+                display: flex;
+                justify-content: space-between;
+            }
+
+            #settingsTitle {
+                font-size: 24px;
+            }
+
+            .setttingsContent {
+                font-size: 18px;
+            }
+            
             .sidebar {
                 z-index: 1000;
                 position: fixed;
@@ -90,7 +107,7 @@ function initializeHomepage() {
             }
 
             .videoCardWrapper {
-                width: 15%;
+                width: 18%;
                 height: 100%;
                 display: flex;
                 flex-direction: column;
@@ -206,8 +223,9 @@ function initializeHomepage() {
         refreshVideoCards();
     });
     document.body.appendChild(Header);
-    getCurrentUserNickname();
-    pushVideoCards(3);
+    await pushVideoCards(3);
+    await getCurrentUserNickname();
+    
 }
 
 // 添加header
